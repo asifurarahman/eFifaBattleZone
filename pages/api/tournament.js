@@ -1,7 +1,5 @@
-import fs from 'fs';
-import path from 'path';
-
-const dataFile = path.join(process.cwd(), 'tournament-data.json');
+// In-memory storage for Vercel deployment
+let tournamentData = null;
 
 // Initialize tournament data
 const initialData = {
@@ -196,10 +194,10 @@ const initialData = {
   }
 };
 
-// Initialize data file if it doesn't exist
+// Initialize tournament data in memory
 function initializeData() {
-  if (!fs.existsSync(dataFile)) {
-    fs.writeFileSync(dataFile, JSON.stringify(initialData, null, 2));
+  if (!tournamentData) {
+    tournamentData = JSON.parse(JSON.stringify(initialData)); // Deep copy
   }
 }
 
@@ -583,8 +581,8 @@ export default function handler(req, res) {
   if (req.method === 'GET') {
     // Public endpoint - anyone can read tournament data
     try {
-      const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
-      return res.status(200).json(data);
+      initializeData(); // Ensure data is initialized
+      return res.status(200).json(tournamentData);
     } catch (error) {
       console.error('Error reading tournament data:', error);
       return res.status(500).json({ error: 'Failed to load tournament data' });
@@ -611,7 +609,8 @@ export default function handler(req, res) {
         return res.status(400).json({ error: 'Missing required fields: matchId, homeScore, awayScore' });
       }
       
-      const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+      initializeData(); // Ensure data is initialized
+      const data = tournamentData;
       
       // Find match in group matches, playoffs, or double elimination brackets
       let match = data.matches.find(m => m.id === matchId);
@@ -670,7 +669,7 @@ export default function handler(req, res) {
       }
       
       data.lastUpdate = Date.now();
-      fs.writeFileSync(dataFile, JSON.stringify(data, null, 2));
+      // Data is already updated in memory (tournamentData reference)
       
       return res.status(200).json({ success: true, message: 'Score updated successfully' });
       
