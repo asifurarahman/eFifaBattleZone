@@ -540,7 +540,19 @@ export default function Tournament() {
               <div className="match-round">
                 <h3 className="round-title">🏆 Playoff Battles</h3>
                 <div className="matches-grid">
-                  {tournamentData.playoffs.map(match => (
+                  {tournamentData.playoffs
+                    .sort((a, b) => {
+                      // Convert time strings to comparable format (e.g., "5:00 PM" -> 1700)
+                      const timeToMinutes = (timeStr) => {
+                        const [time, period] = timeStr.split(' ');
+                        const [hours, minutes] = time.split(':').map(Number);
+                        const hour24 = period === 'PM' && hours !== 12 ? hours + 12 : 
+                                     period === 'AM' && hours === 12 ? 0 : hours;
+                        return hour24 * 60 + minutes;
+                      };
+                      return timeToMinutes(a.time) - timeToMinutes(b.time);
+                    })
+                    .map(match => (
                     <div key={match.id} className={`match-card ${match.status} ${match.bracket || 'playoff'}`}>
                       <div className="match-header">
                         <div className="match-time">{match.time} • {match.stage}</div>
@@ -604,6 +616,420 @@ export default function Tournament() {
               <div className="champion-rank">🥉</div>
               <div className="champion-title">3rd Place</div>
               <div className="champion-name">{tournamentData.champions.thirdplace || 'TBD'}</div>
+            </div>
+          </div>
+        </section>
+
+        {/* Tournament Bracket Diagram */}
+        <section className="bracket-section">
+          <h2 className="section-title">🏆 TOURNAMENT BRACKET</h2>
+          
+          <div className="bracket-container">
+            {/* Group Stage to Playoffs Flow */}
+            <div className="bracket-flow">
+              <div className="groups-to-playoffs">
+                {/* Group Results */}
+                <div className="group-results">
+                  <div className="group-result-card">
+                    <h4>Group A</h4>
+                    <div className="qualifier">
+                      <span className="position">1st</span>
+                      <span className="team">
+                        {(() => {
+                          const groupA = getSortedFighters('A');
+                          const hasMatches = groupA.some(f => f.played > 0);
+                          return hasMatches ? (groupA[0]?.name.split(' ')[0] || 'TBD') : 'TBD';
+                        })()}
+                      </span>
+                    </div>
+                    <div className="qualifier">
+                      <span className="position">2nd</span>
+                      <span className="team">
+                        {(() => {
+                          const groupA = getSortedFighters('A');
+                          const hasMatches = groupA.some(f => f.played > 0);
+                          return hasMatches ? (groupA[1]?.name.split(' ')[0] || 'TBD') : 'TBD';
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="group-result-card">
+                    <h4>Group B</h4>
+                    <div className="qualifier">
+                      <span className="position">1st</span>
+                      <span className="team">
+                        {(() => {
+                          const groupB = getSortedFighters('B');
+                          const hasMatches = groupB.some(f => f.played > 0);
+                          return hasMatches ? (groupB[0]?.name.split(' ')[0] || 'TBD') : 'TBD';
+                        })()}
+                      </span>
+                    </div>
+                    <div className="qualifier">
+                      <span className="position">2nd</span>
+                      <span className="team">
+                        {(() => {
+                          const groupB = getSortedFighters('B');
+                          const hasMatches = groupB.some(f => f.played > 0);
+                          return hasMatches ? (groupB[1]?.name.split(' ')[0] || 'TBD') : 'TBD';
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Arrow to Playoffs */}
+                <div className="flow-arrow">
+                  <div className="arrow-text">Advance to</div>
+                  <div className="arrow">→</div>
+                  <div className="arrow-text">Double Elimination</div>
+                </div>
+              </div>
+
+                {/* Double Elimination Bracket */}
+              <div className="double-elimination-bracket">
+                {tournamentData.stage === 'group' && (
+                  /* Static bracket preview during group stage */
+                  <>
+                    {/* Upper Bracket Preview */}
+                    <div className="upper-bracket">
+                      <h3 className="bracket-title">🔥 Upper Bracket Preview</h3>
+                      <div className="bracket-rounds">
+                        <div className="bracket-round">
+                          <div className="round-label">Upper Semis</div>
+                          <div className="matches">
+                            <div className="bracket-match">
+                              <div className="match-participants">
+                                <div className="participant">A1</div>
+                                <div className="vs">vs</div>
+                                <div className="participant">B2</div>
+                              </div>
+                              <div className="match-time">5:00 PM</div>
+                            </div>
+                            <div className="bracket-match">
+                              <div className="match-participants">
+                                <div className="participant">B1</div>
+                                <div className="vs">vs</div>
+                                <div className="participant">A2</div>
+                              </div>
+                              <div className="match-time">5:15 PM</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="bracket-connector">
+                          <div className="connector-line"></div>
+                          <div className="connector-line"></div>
+                        </div>
+                        <div className="bracket-round">
+                          <div className="round-label">Upper Final</div>
+                          <div className="matches">
+                            <div className="bracket-match final-match">
+                              <div className="match-participants">
+                                <div className="participant">Winner US1</div>
+                                <div className="vs">vs</div>
+                                <div className="participant">Winner US2</div>
+                              </div>
+                              <div className="match-time">5:45 PM</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Lower Bracket Preview */}
+                    <div className="lower-bracket">
+                      <h3 className="bracket-title">⚡ Lower Bracket Preview</h3>
+                      <div className="bracket-rounds">
+                        <div className="bracket-round">
+                          <div className="round-label">Lower Semi</div>
+                          <div className="matches">
+                            <div className="bracket-match">
+                              <div className="match-participants">
+                                <div className="participant">Loser US1</div>
+                                <div className="vs">vs</div>
+                                <div className="participant">Loser US2</div>
+                              </div>
+                              <div className="match-time">5:30 PM</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="bracket-round">
+                          <div className="round-label">Lower Final</div>
+                          <div className="matches">
+                            <div className="bracket-match">
+                              <div className="match-participants">
+                                <div className="participant">Winner LS</div>
+                                <div className="vs">vs</div>
+                                <div className="participant">Loser UF</div>
+                              </div>
+                              <div className="match-time">6:00 PM</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Grand Final Preview */}
+                    <div className="grand-final">
+                      <h3 className="bracket-title">👑 Grand Final Preview</h3>
+                      <div className="final-match-container">
+                        <div className="bracket-match championship">
+                          <div className="match-participants">
+                            <div className="participant champion-side">Upper Winner</div>
+                            <div className="vs championship-vs">VS</div>
+                            <div className="participant champion-side">Lower Winner</div>
+                          </div>
+                          <div className="match-time championship-time">6:15 PM</div>
+                          <div className="championship-label">🏆 CHAMPIONSHIP MATCH</div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {tournamentData.stage === 'playoffs' && (
+                  /* Live bracket during playoffs */
+                  <>
+                    {/* Live Upper Bracket */}
+                    <div className="upper-bracket">
+                      <h3 className="bracket-title">🔥 Upper Bracket - LIVE</h3>
+                      <div className="bracket-rounds">
+                        <div className="bracket-round">
+                          <div className="round-label">Upper Semis</div>
+                          <div className="matches">
+                            {tournamentData.doubleElimination?.upperBracket
+                              ?.filter(match => match.stage.includes('Semi'))
+                              ?.map(match => (
+                                <div key={match.id} className={`bracket-match ${match.status}`}>
+                                  <div className="match-participants">
+                                    <div className="participant">
+                                      {tournamentData.fighters[match.home]?.name.split(' ')[0] || 'TBD'}
+                                    </div>
+                                    <div className="vs">vs</div>
+                                    <div className="participant">
+                                      {tournamentData.fighters[match.away]?.name.split(' ')[0] || 'TBD'}
+                                    </div>
+                                  </div>
+                                  <div className="match-time">{match.time}</div>
+                                  {match.status === 'completed' && (
+                                    <div className="match-result">
+                                      {match.homeScore}-{match.awayScore}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                        <div className="bracket-connector">
+                          <div className="connector-line"></div>
+                          <div className="connector-line"></div>
+                        </div>
+                        <div className="bracket-round">
+                          <div className="round-label">Upper Final</div>
+                          <div className="matches">
+                            {tournamentData.doubleElimination?.upperBracket
+                              ?.filter(match => match.stage.includes('Final'))
+                              ?.map(match => (
+                                <div key={match.id} className={`bracket-match final-match ${match.status}`}>
+                                  <div className="match-participants">
+                                    <div className="participant">
+                                      {tournamentData.fighters[match.home]?.name.split(' ')[0] || 'TBD'}
+                                    </div>
+                                    <div className="vs">vs</div>
+                                    <div className="participant">
+                                      {tournamentData.fighters[match.away]?.name.split(' ')[0] || 'TBD'}
+                                    </div>
+                                  </div>
+                                  <div className="match-time">{match.time}</div>
+                                  {match.status === 'completed' && (
+                                    <div className="match-result">
+                                      {match.homeScore}-{match.awayScore}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Live Lower Bracket */}
+                    <div className="lower-bracket">
+                      <h3 className="bracket-title">⚡ Lower Bracket - LIVE</h3>
+                      <div className="bracket-rounds">
+                        <div className="bracket-round">
+                          <div className="round-label">Lower Matches</div>
+                          <div className="matches">
+                            {tournamentData.doubleElimination?.lowerBracket?.map(match => (
+                              <div key={match.id} className={`bracket-match ${match.status}`}>
+                                <div className="match-participants">
+                                  <div className="participant">
+                                    {tournamentData.fighters[match.home]?.name.split(' ')[0] || 'TBD'}
+                                  </div>
+                                  <div className="vs">vs</div>
+                                  <div className="participant">
+                                    {tournamentData.fighters[match.away]?.name.split(' ')[0] || 'TBD'}
+                                  </div>
+                                </div>
+                                <div className="match-time">{match.time}</div>
+                                <div className="match-stage">{match.stage}</div>
+                                {match.status === 'completed' && (
+                                  <div className="match-result">
+                                    {match.homeScore}-{match.awayScore}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Live Grand Final */}
+                    {tournamentData.doubleElimination?.grandFinal && (
+                      <div className="grand-final">
+                        <h3 className="bracket-title">👑 Grand Final - LIVE</h3>
+                        <div className="final-match-container">
+                          <div className={`bracket-match championship ${tournamentData.doubleElimination.grandFinal.status}`}>
+                            <div className="match-participants">
+                              <div className="participant champion-side">
+                                {tournamentData.fighters[tournamentData.doubleElimination.grandFinal.home]?.name.split(' ')[0] || 'Upper Winner'}
+                              </div>
+                              <div className="vs championship-vs">VS</div>
+                              <div className="participant champion-side">
+                                {tournamentData.fighters[tournamentData.doubleElimination.grandFinal.away]?.name.split(' ')[0] || 'Lower Winner'}
+                              </div>
+                            </div>
+                            <div className="match-time championship-time">{tournamentData.doubleElimination.grandFinal.time}</div>
+                            {tournamentData.doubleElimination.grandFinal.status === 'completed' && (
+                              <div className="championship-result">
+                                {tournamentData.doubleElimination.grandFinal.homeScore}-{tournamentData.doubleElimination.grandFinal.awayScore}
+                              </div>
+                            )}
+                            <div className="championship-label">🏆 CHAMPIONSHIP MATCH</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Bracket Legend */}
+            <div className="bracket-legend">
+              <h4>📖 Bracket Guide</h4>
+              <div className="legend-items">
+                <div className="legend-item">
+                  <span className="legend-color upper"></span>
+                  <span>Upper Bracket - Winners stay in winners bracket</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-color lower"></span>
+                  <span>Lower Bracket - Second chance for eliminated players</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-color final"></span>
+                  <span>Grand Final - Championship match (Best of 1)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Tournament Rules */}
+        <section className="rules-section">
+          <h2 className="section-title">📋 TOURNAMENT RULES & FORMAT</h2>
+          
+          <div className="rules-container">
+            {/* Format Overview */}
+            <div className="rules-card">
+              <h3 className="rules-title">🏆 Tournament Format</h3>
+              <div className="rules-content">
+                <p><strong>Structure:</strong> Group Stage + Double Elimination Playoffs</p>
+                <p><strong>Participants:</strong> 8 Players in 2 Groups (4 players each)</p>
+                <p><strong>Qualification:</strong> Top 2 from each group advance to playoffs</p>
+                <p><strong>Total Matches:</strong> 12 Group Stage + Up to 5 Playoff matches</p>
+              </div>
+            </div>
+
+            {/* Group Stage Rules */}
+            <div className="rules-card">
+              <h3 className="rules-title">⚔️ Group Stage Rules</h3>
+              <div className="rules-content">
+                <p><strong>Format:</strong> Round-robin (everyone plays everyone in their group)</p>
+                <p><strong>Match Length:</strong> 5-minute halves (10 minutes total)</p>
+                <p><strong>Points System:</strong></p>
+                <ul>
+                  <li>🏆 Win = 3 points</li>
+                  <li>🤝 Draw = 1 point</li>
+                  <li>❌ Loss = 0 points</li>
+                </ul>
+                <p><strong>Matches per Group:</strong> 6 matches (3 matches per player)</p>
+              </div>
+            </div>
+
+            {/* FIFA Tiebreakers */}
+            <div className="rules-card">
+              <h3 className="rules-title">⚖️ FIFA Tiebreaker Rules</h3>
+              <div className="rules-content">
+                <p><strong>If teams are tied on points, ranking determined by:</strong></p>
+                <ol>
+                  <li>🎯 <strong>Points</strong> in all group matches</li>
+                  <li>📊 <strong>Goal Difference</strong> in all group matches</li>
+                  <li>⚽ <strong>Goals For</strong> in all group matches</li>
+                  <li>🤝 <strong>Head-to-Head Points</strong> between tied teams</li>
+                  <li>📈 <strong>Head-to-Head Goal Difference</strong> between tied teams</li>
+                  <li>🎯 <strong>Head-to-Head Goals For</strong> between tied teams</li>
+                  <li>🟨🟥 <strong>Fair Play Points</strong> (Yellow = 1pt, Red = 4pts - LOWER is better)</li>
+                  <li>🎲 <strong>Drawing of Lots</strong> (random selection)</li>
+                </ol>
+              </div>
+            </div>
+
+            {/* Double Elimination */}
+            <div className="rules-card">
+              <h3 className="rules-title">🏅 Double Elimination Playoffs</h3>
+              <div className="rules-content">
+                <p><strong>Bracket Structure:</strong></p>
+                <ul>
+                  <li>🔥 <strong>Upper Bracket:</strong> Winners stay in winners bracket</li>
+                  <li>⚡ <strong>Lower Bracket:</strong> Losers get second chance</li>
+                  <li>👑 <strong>Grand Final:</strong> Upper bracket winner vs Lower bracket champion</li>
+                </ul>
+                <p><strong>Seeding:</strong></p>
+                <ul>
+                  <li>Upper Semi 1: Group A Winner vs Group B Runner-up</li>
+                  <li>Upper Semi 2: Group B Winner vs Group A Runner-up</li>
+                </ul>
+                <p><strong>Format:</strong> All matches are Best of 1 (BO1)</p>
+              </div>
+            </div>
+
+            {/* Match Rules */}
+            <div className="rules-card">
+              <h3 className="rules-title">🎮 Match Rules</h3>
+              <div className="rules-content">
+                <p><strong>Game:</strong> FC 25 (FIFA 25)</p>
+                <p><strong>Match Length:</strong> 5-minute halves</p>
+                <p><strong>Draws:</strong> Allowed in Group Stage, Extra Time in Playoffs</p>
+                <p><strong>Cards Tracked:</strong> Yellow Cards (🟨) and Red Cards (🟥) only</p>
+                <p><strong>Fair Play:</strong> Disciplinary points affect tiebreaking</p>
+                <p><strong>Venue:</strong> Main Arena</p>
+              </div>
+            </div>
+
+            {/* Schedule */}
+            <div className="rules-card">
+              <h3 className="rules-title">⏰ Tournament Schedule</h3>
+              <div className="rules-content">
+                <p><strong>Group Stage:</strong> 2:00 PM - 4:45 PM</p>
+                <p><strong>Playoff Break:</strong> 4:45 PM - 5:00 PM (15 minutes)</p>
+                <p><strong>Double Elimination:</strong> 5:00 PM - 6:15 PM</p>
+                <p><strong>Total Duration:</strong> ~4 hours 15 minutes</p>
+                <p><strong>Match Intervals:</strong> 15 minutes between matches</p>
+              </div>
             </div>
           </div>
         </section>
