@@ -485,7 +485,19 @@ export default function Tournament() {
               <div className="match-round">
                 <h3 className="round-title">🔥 Group Stage Battles</h3>
                 <div className="matches-grid">
-                  {tournamentData.matches.map(match => (
+                  {tournamentData.matches
+                    .sort((a, b) => {
+                      // Convert time strings to comparable format (e.g., "2:00 PM" -> 1400)
+                      const timeToMinutes = (timeStr) => {
+                        const [time, period] = timeStr.split(' ');
+                        const [hours, minutes] = time.split(':').map(Number);
+                        const hour24 = period === 'PM' && hours !== 12 ? hours + 12 : 
+                                     period === 'AM' && hours === 12 ? 0 : hours;
+                        return hour24 * 60 + minutes;
+                      };
+                      return timeToMinutes(a.time) - timeToMinutes(b.time);
+                    })
+                    .map(match => (
                     <div key={match.id} className={`match-card ${match.status}`}>
                       <div className="match-header">
                         <div className="match-time">{match.time} • Group {match.group}</div>
