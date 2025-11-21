@@ -116,6 +116,8 @@ const initialData = {
       points: 0, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0,
       // Essential FC 25 disciplinary record (for Fair Play tiebreaker)
       yellowCards: 0, redCards: 0, fairPlayPoints: 0,
+      // Performance stats for display
+      cleanSheets: 0, goalsPerMatch: 0,
       // Display stats for player cards
       biggestWin: null, biggestWinMargin: 0, biggestLoss: null, biggestLossMargin: 0
     },
@@ -123,18 +125,21 @@ const initialData = {
       name: 'Shaiuf Sadique Pritul', icon: '⚡', group: 'A',
       points: 0, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0,
       yellowCards: 0, redCards: 0, fairPlayPoints: 0,
+      cleanSheets: 0, goalsPerMatch: 0,
       biggestWin: null, biggestWinMargin: 0, biggestLoss: null, biggestLossMargin: 0
     },
     'Jacob': {
       name: 'Jacob', icon: '🚀', group: 'A',
       points: 0, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0,
       yellowCards: 0, redCards: 0, fairPlayPoints: 0,
+      cleanSheets: 0, goalsPerMatch: 0,
       biggestWin: null, biggestWinMargin: 0, biggestLoss: null, biggestLossMargin: 0
     },
     'Asifur': {
       name: 'Asifur Rahman', icon: '💥', group: 'A',
       points: 0, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0,
       yellowCards: 0, redCards: 0, fairPlayPoints: 0,
+      cleanSheets: 0, goalsPerMatch: 0,
       biggestWin: null, biggestWinMargin: 0, biggestLoss: null, biggestLossMargin: 0
     },
     
@@ -143,24 +148,28 @@ const initialData = {
       name: 'Wasif Azmaeen', icon: '🎮', group: 'B',
       points: 0, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0,
       yellowCards: 0, redCards: 0, fairPlayPoints: 0,
+      cleanSheets: 0, goalsPerMatch: 0,
       biggestWin: null, biggestWinMargin: 0, biggestLoss: null, biggestLossMargin: 0
     },
     'Swapnil': {
       name: 'Swapnil Sharma Sarker', icon: '🏹', group: 'B',
       points: 0, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0,
       yellowCards: 0, redCards: 0, fairPlayPoints: 0,
+      cleanSheets: 0, goalsPerMatch: 0,
       biggestWin: null, biggestWinMargin: 0, biggestLoss: null, biggestLossMargin: 0
     },
     'Showrin': {
       name: 'Showrin Barua', icon: '⭐', group: 'B',
       points: 0, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0,
       yellowCards: 0, redCards: 0, fairPlayPoints: 0,
+      cleanSheets: 0, goalsPerMatch: 0,
       biggestWin: null, biggestWinMargin: 0, biggestLoss: null, biggestLossMargin: 0
     },
     'Qazi': {
       name: 'Qazi Taskin', icon: '🔥', group: 'B',
       points: 0, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0,
       yellowCards: 0, redCards: 0, fairPlayPoints: 0,
+      cleanSheets: 0, goalsPerMatch: 0,
       biggestWin: null, biggestWinMargin: 0, biggestLoss: null, biggestLossMargin: 0
     }
   },
@@ -222,6 +231,14 @@ function updateFighterStats(fighters, fighterId, matchStats, opponentId) {
   fighter.yellowCards += parseInt(yellowCards);
   fighter.redCards += parseInt(redCards);
   fighter.fairPlayPoints += (yellowCards * 1) + (redCards * 4);
+  
+  // Clean sheet tracking (no goals conceded in this match)
+  if (parseInt(goalsAgainst) === 0) {
+    fighter.cleanSheets++;
+  }
+  
+  // Calculate goals per match (updated after each match)
+  fighter.goalsPerMatch = (fighter.gf / fighter.played).toFixed(2);
   
   // Track biggest wins and losses for display
   const goalDifference = parseInt(goalsFor) - parseInt(goalsAgainst);
@@ -295,6 +312,8 @@ function recalculateAllFighterStats(data) {
     fighter.yellowCards = 0;
     fighter.redCards = 0;
     fighter.fairPlayPoints = 0;
+    fighter.cleanSheets = 0;
+    fighter.goalsPerMatch = 0;
     fighter.biggestWin = null;
     fighter.biggestWinMargin = 0;
     fighter.biggestLoss = null;

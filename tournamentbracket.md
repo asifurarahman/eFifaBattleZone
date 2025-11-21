@@ -1,16 +1,4 @@
-Perfect! I’ve polished your Markdown package:
-
-* Fixed **Points column formatting**
-* Added **half-time length explicitly**
-* Added **ASCII-style visual bracket** for clarity
-* Slightly adjusted schedule for **5 min buffer before DE**
-* Cleaned up tables and headers for readability
-
-Here’s the **complete ready-to-use Markdown**:
-
----
-
-# FC 25 Tournament Package
+# eFIFA BattleZone (Season 1) Tournament Bracket
 
 ## Group Stage + Double Elimination Format
 
@@ -133,7 +121,7 @@ Here’s the **complete ready-to-use Markdown**:
 
 ---
 
-### ASCII Bracket Visualization
+### Bracket Visualization
 
 ```
           Upper Bracket
@@ -176,7 +164,7 @@ Here’s the **complete ready-to-use Markdown**:
 | 4:30 PM | Jacob vs Pritul    | Group A |
 | 4:45 PM | Swapnil vs Showrin | Group B |
 
-DE starts at 5:00 PM
+**DE starts at 5:00 PM**
 
 ### Double Elimination
 
@@ -235,16 +223,6 @@ DE starts at 5:00 PM
 * Losers → Lower Bracket → Lower Final → Grand Final
 
 ---
-
-## 📊 Results Tracking
-
-| Match             | Result | Score |
-| ----------------- | ------ | ----- |
-| Amlan vs Jacob    | TBD    | -     |
-| Pritul vs Asifur  | TBD    | -     |
-| Wasif vs Swapnil  | TBD    | -     |
-| Showrin vs Qazi   | TBD    | -     |
-| ...               | ...    | ...   |
 
 **Tournament Champion:** 🏆 TBD
 

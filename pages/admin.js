@@ -52,6 +52,8 @@ export default function AdminPanel() {
       }
 
       // If we get here, credentials are valid (even if match ID is invalid)
+      // Store credentials in localStorage for subsequent API calls
+      localStorage.setItem('adminCredentials', btoa(`${username}:${password}`));
       setIsAuthenticated(true);
       setIsAuthenticating(false);
       
@@ -66,6 +68,8 @@ export default function AdminPanel() {
     setIsAuthenticated(false);
     setUsername('');
     setPassword('');
+    // Clear stored credentials from localStorage
+    localStorage.removeItem('adminCredentials');
     clearFormFields();
   };
 
@@ -135,7 +139,7 @@ export default function AdminPanel() {
       const storedCredentials = localStorage.getItem('adminCredentials');
       if (!storedCredentials) {
         alert('Authentication expired. Please log in again.');
-        handleLogout();
+        logout();
         return;
       }
 
